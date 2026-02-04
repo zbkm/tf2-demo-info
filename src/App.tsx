@@ -199,86 +199,84 @@ function Players({ data }: { data: DemoData }) {
   }, [users, data.playerSummary]);
 
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-      {sortedUsers.map((user) => {
-        const stats = data.playerSummary?.player_summaries[user.userId.toString()];
-        return (
-          <div key={user.userId} className="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden flex flex-col group min-h-[180px]">
-            <div className={cn(
-              "h-1.5",
-              user.team === 'red' ? "bg-red-500" : user.team === 'blue' ? "bg-blue-500" : "bg-slate-600"
-            )} />
-            <div className="p-5 flex-1 flex flex-col">
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex flex-col gap-1">
-                  <div className="flex items-center gap-2">
-                    <h3 className={cn(
-                      "text-xl font-bold transition-colors",
-                      user.team === 'red' ? "text-red-400" : user.team === 'blue' ? "text-blue-400" : "text-slate-200"
-                    )}>{user.name}</h3>
-                    <a
-                      href={`https://steamcommunity.com/profiles/${user.steamId}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-slate-600 hover:text-orange-500 transition-colors"
-                      title="View Steam Profile"
-                    >
-                      <ExternalLink size={14} />
-                    </a>
-                  </div>
-                  <p className="text-[10px] font-mono text-slate-500">{user.steamId}</p>
-                </div>
-                <div className="flex flex-col items-end gap-1">
-                  <span className={cn(
-                    "px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest",
-                    user.team === 'red' ? "bg-red-500/10 text-red-500" : user.team === 'blue' ? "bg-blue-500/10 text-blue-500" : "bg-slate-800 text-slate-400"
-                  )}>
-                    {user.team}
-                  </span>
-                  {stats && (
-                    <span className="text-orange-500 font-bold text-lg tabular-nums">
-                      {stats.points} <span className="text-[10px] text-slate-500 uppercase font-bold">pts</span>
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              {stats && (
-                <div className="grid grid-cols-4 sm:grid-cols-8 gap-2 mb-4 bg-slate-950/50 p-3 rounded-xl border border-slate-800/50">
-                  <StatMini label="K" value={stats.kills} />
-                  <StatMini label="A" value={stats.assists} />
-                  <StatMini label="D" value={stats.deaths} />
-                  <StatMini label="DMG" value={stats.damage_dealt} wide />
-                  <StatMini label="UBER" value={stats.ubercharges} />
-                  <StatMini label="HS" value={stats.headshots} />
-                  <StatMini label="BACK" value={stats.backstabs} />
-                  <StatMini label="HEAL" value={stats.healing} wide />
-                </div>
-              )}
-
-              <div className="flex flex-wrap gap-2 mt-auto">
-                {Object.entries(user.classes).map(([classId, count]) => (
-                  count > 0 && (
-                    <div key={classId} className="bg-slate-800 px-3 py-1 rounded-lg flex items-center gap-2 border border-slate-700/50 group-hover:border-slate-600 transition-colors">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">{getClassName(parseInt(classId))}</span>
-                      <span className="text-xs font-black text-orange-500 tabular-nums">{count}</span>
+    <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden">
+      <div className="overflow-x-auto min-h-[400px]">
+        <table className="w-full text-left border-collapse table-auto">
+          <thead>
+            <tr className="bg-slate-800/50 border-b border-slate-800">
+              <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Player</th>
+              <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-center">Team</th>
+              <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-center">Score</th>
+              <th className="px-4 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-center">K</th>
+              <th className="px-4 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-center">A</th>
+              <th className="px-4 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-center">D</th>
+              <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-right">DMG</th>
+              <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Classes</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-800">
+            {sortedUsers.map((user) => {
+              const stats = data.playerSummary?.player_summaries[user.userId.toString()];
+              return (
+                <tr key={user.userId} className="hover:bg-slate-800/30 transition-colors group">
+                  <td className="px-6 py-4">
+                    <div className="flex flex-col">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className={cn(
+                          "font-bold text-sm",
+                          user.team === 'red' ? "text-red-400" : user.team === 'blue' ? "text-blue-400" : "text-slate-300"
+                        )}>
+                          {user.name}
+                        </span>
+                        <a
+                          href={`https://steamcommunity.com/profiles/${user.steamId}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-slate-600 hover:text-orange-500 transition-colors"
+                        >
+                          <ExternalLink size={12} />
+                        </a>
+                      </div>
+                      <span className="text-[9px] font-mono text-slate-600 tabular-nums">{user.steamId}</span>
                     </div>
-                  )
-                ))}
-              </div>
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-function StatMini({ label, value, wide }: { label: string, value: number, wide?: boolean }) {
-  return (
-    <div className={cn("flex flex-col items-center", wide && "col-span-1")}>
-      <span className="text-[8px] font-bold text-slate-600 uppercase tracking-tighter mb-0.5">{label}</span>
-      <span className="text-xs font-bold text-slate-300 tabular-nums">{value.toLocaleString()}</span>
+                  </td>
+                  <td className="px-6 py-4 text-center">
+                    <span className={cn(
+                      "px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-tighter",
+                      user.team === 'red' ? "bg-red-500/10 text-red-500 outline outline-1 outline-red-500/20" :
+                      user.team === 'blue' ? "bg-blue-500/10 text-blue-500 outline outline-1 outline-blue-500/20" :
+                      "bg-slate-800 text-slate-500"
+                    )}>
+                      {user.team}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-center font-bold text-orange-500 tabular-nums text-sm">
+                    {stats?.points ?? '-'}
+                  </td>
+                  <td className="px-4 py-4 text-center text-slate-300 tabular-nums text-sm">{stats?.kills ?? '-'}</td>
+                  <td className="px-4 py-4 text-center text-slate-400 tabular-nums text-sm">{stats?.assists ?? '-'}</td>
+                  <td className="px-4 py-4 text-center text-slate-500 tabular-nums text-sm">{stats?.deaths ?? '-'}</td>
+                  <td className="px-6 py-4 text-right text-slate-300 tabular-nums font-mono text-sm">
+                    {stats?.damage_dealt.toLocaleString() ?? '-'}
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex flex-wrap gap-1 max-w-[200px]">
+                      {Object.entries(user.classes).map(([classId, count]) => (
+                        count > 0 && (
+                          <div key={classId} className="bg-slate-800/50 px-1.5 py-0.5 rounded border border-slate-700/50 flex gap-1 items-center" title={`${getClassName(parseInt(classId))}: ${count}`}>
+                             <span className="text-[8px] font-bold text-slate-500 uppercase">{getClassName(parseInt(classId))[0]}</span>
+                             <span className="text-[9px] font-black text-orange-500/80">{count}</span>
+                          </div>
+                        )
+                      ))}
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
@@ -295,16 +293,16 @@ function Killfeed({ data }: { data: DemoData }) {
 
   return (
     <div className="space-y-4">
-      <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden">
+      <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden text-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-800/50 border-b border-slate-800">
-                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Time</th>
-                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-right">Killer</th>
-                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-center">Action</th>
-                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Victim</th>
-                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Weapon</th>
+                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Time</th>
+                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-right">Killer</th>
+                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500 text-center">Action</th>
+                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Victim</th>
+                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">Weapon</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800">
@@ -315,7 +313,7 @@ function Killfeed({ data }: { data: DemoData }) {
 
                 return (
                   <tr key={i} className="hover:bg-slate-800/30 transition-colors group">
-                    <td className="px-6 py-4 text-sm font-mono text-slate-500">{time}</td>
+                    <td className="px-6 py-4 text-xs font-mono text-slate-500">{time}</td>
                     <td className="px-6 py-4 text-right">
                       <span className={cn(
                         "font-bold",
@@ -325,7 +323,7 @@ function Killfeed({ data }: { data: DemoData }) {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-center">
-                      <ChevronRight className="inline-block text-slate-600 group-hover:translate-x-1 transition-transform" size={16} />
+                      <ChevronRight className="inline-block text-slate-600 group-hover:translate-x-1 transition-transform" size={14} />
                     </td>
                     <td className="px-6 py-4">
                       <span className={cn(
@@ -349,26 +347,26 @@ function Killfeed({ data }: { data: DemoData }) {
       </div>
 
       <div className="flex items-center justify-between px-2">
-        <p className="text-xs text-slate-500">
-          Showing {page * ITEMS_PER_PAGE + 1} to {Math.min((page + 1) * ITEMS_PER_PAGE, data.deaths.length)} of {data.deaths.length}
+        <p className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">
+          {page * ITEMS_PER_PAGE + 1} - {Math.min((page + 1) * ITEMS_PER_PAGE, data.deaths.length)} / {data.deaths.length}
         </p>
         <div className="flex gap-2">
           <button
             onClick={() => setPage(p => Math.max(0, p - 1))}
             disabled={page === 0}
-            className="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 disabled:opacity-30 hover:text-white transition-colors"
+            className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-500 disabled:opacity-30 hover:text-white transition-colors"
           >
-            <ChevronLeft size={20} />
+            <ChevronLeft size={16} />
           </button>
-          <div className="flex items-center px-4 bg-slate-900 border border-slate-800 rounded-lg text-xs font-bold text-slate-300">
+          <div className="flex items-center px-3 bg-slate-900 border border-slate-800 rounded-lg text-[10px] font-black text-slate-400">
             {page + 1} / {totalPages}
           </div>
           <button
             onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
             disabled={page === totalPages - 1}
-            className="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 disabled:opacity-30 hover:text-white transition-colors"
+            className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-500 disabled:opacity-30 hover:text-white transition-colors"
           >
-            <ChevronRight size={20} />
+            <ChevronRight size={16} />
           </button>
         </div>
       </div>
@@ -390,25 +388,25 @@ function Chat({ data }: { data: DemoData }) {
           <MessageSquare className="text-slate-500" size={20} />
           <h2 className="font-bold">Chat Log</h2>
         </div>
-        <span className="text-[10px] font-bold text-slate-500 bg-slate-800 px-2 py-0.5 rounded">{data.chat.length} MSGS</span>
+        <span className="text-[9px] font-black text-slate-500 bg-slate-800 px-2 py-0.5 rounded tracking-widest">{data.chat.length} MSGS</span>
       </div>
-      <div className="p-2 font-mono text-sm leading-relaxed max-h-[600px] overflow-y-auto custom-scrollbar">
+      <div className="p-2 font-mono text-xs leading-relaxed max-h-[600px] overflow-y-auto custom-scrollbar">
         {data.chat.map((msg, i) => {
           const team = getTeamByName(msg.from);
           return (
-            <div key={i} className="py-1 px-4 hover:bg-slate-800/50 rounded flex gap-3 transition-colors">
-              <span className="text-[10px] text-slate-600 shrink-0 w-12 tabular-nums pt-0.5">
+            <div key={i} className="py-0.5 px-4 hover:bg-slate-800/50 rounded flex gap-3 transition-colors">
+              <span className="text-[9px] text-slate-700 shrink-0 w-12 tabular-nums pt-0.5">
                 {formatTick(msg.tick, data.intervalPerTick)}
               </span>
               <p className="break-words">
                 <span className={cn(
                   "font-bold",
-                  team === 'red' ? "text-red-400" : team === 'blue' ? "text-blue-400" : "text-slate-400"
+                  team === 'red' ? "text-red-400" : team === 'blue' ? "text-blue-400" : "text-slate-500"
                 )}>
                   {msg.from}
                 </span>
-                {msg.kind === 'TF_Chat_Team' && <span className="text-slate-500 ml-1">(TEAM)</span>}
-                <span className="text-slate-500">: </span>
+                {msg.kind === 'TF_Chat_Team' && <span className="text-slate-600 ml-1 text-[9px] font-bold">(TEAM)</span>}
+                <span className="text-slate-600">: </span>
                 <span className="text-slate-300">{msg.text}</span>
               </p>
             </div>
@@ -425,40 +423,40 @@ function Rounds({ data }: { data: DemoData }) {
       {data.rounds.map((round, i) => (
         <div key={i} className="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden flex flex-col group">
           <div className={cn(
-            "h-1.5",
+            "h-1",
             round.winner === 'red' ? "bg-red-500" : "bg-blue-500"
           )} />
           <div className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-slate-800 rounded-xl flex items-center justify-center text-orange-500 group-hover:scale-110 transition-transform">
-                  <Trophy size={20} />
+                  <Trophy size={18} />
                 </div>
-                <h3 className="font-bold text-lg">Round {i + 1}</h3>
+                <h3 className="font-bold text-lg italic tracking-tight">ROUND {i + 1}</h3>
               </div>
               <span className={cn(
-                "px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest",
-                round.winner === 'red' ? "bg-red-500/10 text-red-500" : "bg-blue-500/10 text-blue-500"
+                "px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest outline outline-1",
+                round.winner === 'red' ? "bg-red-500/10 text-red-500 outline-red-500/20" : "bg-blue-500/10 text-blue-500 outline-blue-500/20"
               )}>
                 {round.winner} victory
               </span>
             </div>
 
             <div className="space-y-3 pt-2">
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-slate-500">Winner</span>
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-slate-600 font-bold uppercase tracking-tight">Winner</span>
                 <span className={cn(
-                  "font-bold capitalize",
+                  "font-black capitalize tracking-wide",
                   round.winner === 'red' ? "text-red-400" : "text-blue-400"
                 )}>{round.winner}</span>
               </div>
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-slate-500">Duration</span>
-                <span className="text-slate-200 font-mono">{Math.floor(round.length / 60)}m {Math.floor(round.length % 60)}s</span>
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-slate-600 font-bold uppercase tracking-tight">Duration</span>
+                <span className="text-slate-300 font-mono tracking-tighter tabular-nums">{Math.floor(round.length / 60)}m {Math.floor(round.length % 60)}s</span>
               </div>
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-slate-500">End Tick</span>
-                <span className="text-slate-200 font-mono">{round.end_tick.toLocaleString()}</span>
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-slate-600 font-bold uppercase tracking-tight">End Tick</span>
+                <span className="text-slate-400 font-mono tracking-tighter tabular-nums">{round.end_tick.toLocaleString()}</span>
               </div>
             </div>
           </div>

@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { Upload, FileText, Users, MessageSquare, Crosshair, Map as MapIcon, Clock, ChevronRight, ExternalLink, ChevronLeft, Trophy } from 'lucide-react';
+import { Upload, FileText, Users, MessageSquare, Crosshair, Map as MapIcon, Clock, ChevronRight, ExternalLink, ChevronLeft, Trophy, ArrowUpDown, ChevronUp, ChevronDown } from 'lucide-react';
 import { useDemoParser } from './hooks/useDemoParser';
 import type { DemoData, PlayerSummary } from './types/demo';
 import { clsx, type ClassValue } from 'clsx';
@@ -8,6 +8,11 @@ import { twMerge } from 'tailwind-merge';
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+type SortConfig = {
+  key: keyof PlayerSummary | 'name' | 'points' | 'kd' | 'hsPct';
+  direction: 'asc' | 'desc';
+} | null;
 
 export default function App() {
   const { data, loading, error, parseDemo, reset } = useDemoParser();
@@ -30,7 +35,7 @@ export default function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white">
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white font-sans">
         <div className="w-16 h-16 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mb-4"></div>
         <p className="text-xl font-medium animate-pulse">Parsing demo file...</p>
       </div>
@@ -39,7 +44,7 @@ export default function App() {
 
   if (!data) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center p-6 font-sans text-center">
         <div
           onDragOver={(e) => e.preventDefault()}
           onDrop={onDrop}
@@ -56,35 +61,35 @@ export default function App() {
           <div className="w-20 h-20 bg-slate-800 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-orange-500/10 transition-all text-slate-400 group-hover:text-orange-500">
             <Upload size={40} />
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2 font-mono tracking-tighter uppercase italic">TF2 DEMO VIEWER</h1>
+          <h1 className="text-3xl font-bold text-white mb-2 tracking-tight">TF2 Demo Viewer</h1>
           <p className="text-slate-400 text-lg">Drag and drop your <code className="text-orange-400">.dem</code> file here</p>
-          <p className="text-slate-500 mt-4 text-sm font-medium tracking-tight">OR CLICK TO BROWSE FILES</p>
-          {error && <p className="mt-8 text-red-400 bg-red-400/10 px-4 py-2 rounded-lg border border-red-400/20">{error}</p>}
+          <p className="text-slate-500 mt-4 text-sm font-medium uppercase tracking-widest group-hover:text-slate-300">Click to browse files</p>
+          {error && <p className="mt-8 text-red-400 bg-red-400/10 px-4 py-2 rounded-lg border border-red-400/20 font-medium">{error}</p>}
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 selection:bg-orange-500 selection:text-white">
+    <div className="min-h-screen bg-slate-950 text-slate-200 selection:bg-orange-500 selection:text-white font-sans">
       <header className="bg-slate-900/50 border-b border-slate-800 sticky top-0 z-50 backdrop-blur-md">
-        <div className="max-w-[1600px] mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="max-w-[1800px] mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <img src="/logo.png" className="h-8 w-auto hover:scale-105 transition-transform cursor-pointer" alt="TF2 Logo" onClick={reset} />
-            <h1 className="font-extrabold text-xl tracking-tighter italic uppercase text-slate-100 hidden sm:block">Demo Viewer</h1>
+            <img src="/logo.png" className="h-8 w-auto cursor-pointer" alt="TF2 Logo" onClick={reset} />
+            <h1 className="font-bold text-lg tracking-tight text-white hidden sm:block">Demo Viewer</h1>
           </div>
           <button
             onClick={reset}
-            className="text-xs font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors flex items-center gap-2 group"
+            className="text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-white transition-colors flex items-center gap-2"
           >
-            <Upload size={14} className="group-hover:-translate-y-0.5 transition-transform" />
-            Upload another
+            <Upload size={14} />
+            Parse Another
           </button>
         </div>
       </header>
 
-      <main className="max-w-[1600px] mx-auto px-6 py-8">
-        <div className="flex flex-wrap gap-2 p-1 bg-slate-900 rounded-xl mb-8 w-fit border border-slate-800 shadow-2xl">
+      <main className="max-w-[1800px] mx-auto px-6 py-8">
+        <div className="flex flex-wrap gap-2 p-1 bg-slate-900 rounded-xl mb-8 w-fit border border-slate-800">
           {[
             { id: 'overview', icon: FileText, label: 'Overview' },
             { id: 'players', icon: Users, label: 'Players' },
@@ -96,10 +101,10 @@ export default function App() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               className={cn(
-                "flex items-center gap-2 px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap",
+                "flex items-center gap-2 px-5 py-2 rounded-lg text-xs font-bold uppercase tracking-widest transition-all whitespace-nowrap",
                 activeTab === tab.id
-                  ? "bg-orange-600 text-white shadow-lg shadow-orange-900/20"
-                  : "text-slate-500 hover:text-slate-200 hover:bg-slate-800"
+                  ? "bg-orange-600 text-white shadow-lg"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-800"
               )}
             >
               <tab.icon size={16} />
@@ -108,7 +113,7 @@ export default function App() {
           ))}
         </div>
 
-        <div className="animate-in fade-in slide-in-from-bottom-2 duration-700">
+        <div className="animate-in fade-in duration-300">
           {activeTab === 'overview' && <Overview data={data} />}
           {activeTab === 'players' && <Players data={data} />}
           {activeTab === 'kills' && <Killfeed data={data} />}
@@ -129,50 +134,48 @@ function Overview({ data }: { data: DemoData }) {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, i) => (
-          <div key={i} className="bg-slate-900 p-6 rounded-2xl border border-slate-800 flex items-center gap-6 shadow-xl">
-            <div className="w-14 h-14 bg-slate-950 rounded-xl flex items-center justify-center text-orange-500 border border-slate-800 outline outline-4 outline-slate-900/50">
-              <stat.icon size={28} />
-            </div>
-            <div>
-              <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1">{stat.label}</p>
-              <p className="text-2xl font-black text-white tracking-tighter">{stat.value}</p>
+          <div key={i} className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-slate-800 rounded-xl flex items-center justify-center text-orange-500">
+                <stat.icon size={24} />
+              </div>
+              <div>
+                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-0.5">{stat.label}</p>
+                <p className="text-xl font-bold text-slate-100">{stat.value}</p>
+              </div>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card title="Server Details">
-           <div className="space-y-3">
-            <InfoRow label="Server IP" value={data.header.server} />
-            <InfoRow label="Protocol" value={data.header.protocol.toString()} />
-            <InfoRow label="Recorder" value={data.header.nick} />
-            <InfoRow label="Game" value={data.header.game} />
-          </div>
-        </Card>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <Section title="Server Intel">
+          <InfoRow label="IP Address" value={data.header.server} />
+          <InfoRow label="Protocol" value={data.header.protocol.toString()} />
+          <InfoRow label="Recorded By" value={data.header.nick} />
+          <InfoRow label="Game" value={data.header.game} />
+        </Section>
 
-        <Card title="Match Activity">
-           <div className="space-y-3">
-            <InfoRow label="Rounds" value={data.rounds.length.toString()} />
-            <InfoRow label="Kills" value={data.deaths.length.toString()} />
-            <InfoRow label="Chat Logs" value={data.chat.length.toString()} />
-          </div>
-        </Card>
+        <Section title="Match Stats">
+          <InfoRow label="Rounds Played" value={data.rounds.length.toString()} />
+          <InfoRow label="Total Kills" value={data.deaths.length.toString()} />
+          <InfoRow label="Messages Sent" value={data.chat.length.toString()} />
+        </Section>
       </div>
     </div>
   );
 }
 
-function Card({ title, children }: { title: string, children: React.ReactNode }) {
+function Section({ title, children }: { title: string, children: React.ReactNode }) {
   return (
-    <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
-      <div className="px-6 py-4 border-b border-slate-800 bg-slate-950/30">
-        <h2 className="font-black text-[11px] uppercase tracking-[0.2em] text-slate-500">{title}</h2>
+    <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden shadow-lg">
+      <div className="px-6 py-4 border-b border-slate-800 bg-slate-950/20">
+        <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">{title}</h2>
       </div>
-      <div className="p-6">
+      <div className="p-6 space-y-1">
         {children}
       </div>
     </div>
@@ -181,107 +184,152 @@ function Card({ title, children }: { title: string, children: React.ReactNode })
 
 function InfoRow({ label, value }: { label: string, value: string }) {
   return (
-    <div className="flex justify-between items-center py-2.5 border-b border-slate-800/40 last:border-0 hover:bg-slate-800/10 transition-colors">
-      <span className="text-slate-500 text-xs font-bold uppercase tracking-tight">{label}</span>
-      <span className="text-slate-200 font-mono text-sm font-medium tracking-tight tabular-nums">{value}</span>
+    <div className="flex justify-between items-center py-2.5 border-b border-slate-800/30 last:border-0 hover:bg-slate-800/10 transition-colors px-2 rounded-md">
+      <span className="text-slate-500 text-xs font-medium">{label}</span>
+      <span className="text-slate-200 font-mono text-sm tracking-tight font-medium tabular-nums">{value}</span>
     </div>
   );
 }
 
 function Players({ data }: { data: DemoData }) {
+  const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'points', direction: 'desc' });
+
   const users = Object.values(data.users);
-  const sortedUsers = useMemo(() => {
-    return [...users].sort((a, b) => {
-      if (a.team !== b.team) {
-        if (a.team === 'red') return -1;
-        if (b.team === 'red') return 1;
-        if (a.team === 'blue') return -1;
-        if (b.team === 'blue') return 1;
+
+  const handleSort = (key: Exclude<SortConfig, null>['key']) => {
+    setSortConfig(prev => {
+      if (prev?.key === key) {
+        return { key, direction: prev.direction === 'desc' ? 'asc' : 'desc' };
       }
-      const scoreA = data.playerSummary?.player_summaries[a.userId.toString()]?.points || 0;
-      const scoreB = data.playerSummary?.player_summaries[b.userId.toString()]?.points || 0;
-      return scoreB - scoreA;
+      return { key, direction: 'desc' };
     });
-  }, [users, data.playerSummary]);
+  };
+
+  const sortedUsers = useMemo(() => {
+    const list = [...users];
+    if (!sortConfig) return list;
+
+    return list.sort((a, b) => {
+      const statsA = data.playerSummary?.player_summaries[a.userId.toString()];
+      const statsB = data.playerSummary?.player_summaries[b.userId.toString()];
+
+      let valA: any = 0;
+      let valB: any = 0;
+
+      switch(sortConfig.key) {
+        case 'name':
+          valA = a.name.toLowerCase();
+          valB = b.name.toLowerCase();
+          break;
+        case 'points':
+          valA = statsA?.points || 0;
+          valB = statsB?.points || 0;
+          break;
+        case 'kd':
+          valA = statsA ? (statsA.deaths === 0 ? statsA.kills : statsA.kills / statsA.deaths) : 0;
+          valB = statsB ? (statsB.deaths === 0 ? statsB.kills : statsB.kills / statsB.deaths) : 0;
+          break;
+        case 'hsPct':
+          valA = statsA ? (statsA.kills === 0 ? 0 : statsA.headshots / statsA.kills) : 0;
+          valB = statsB ? (statsB.kills === 0 ? 0 : statsB.headshots / statsB.kills) : 0;
+          break;
+        default:
+          valA = (statsA as any)?.[sortConfig.key] || 0;
+          valB = (statsB as any)?.[sortConfig.key] || 0;
+      }
+
+      if (valA < valB) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (valA > valB) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }, [users, data.playerSummary, sortConfig]);
 
   return (
-    <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden shadow-2xl">
+    <div className="bg-slate-900 rounded-2xl border border-slate-800 shadow-2xl overflow-hidden">
       <div className="overflow-x-auto custom-scrollbar">
         <table className="w-full text-left border-collapse table-auto">
           <thead>
             <tr className="bg-slate-950/50 border-b border-slate-800">
-              <th className="px-6 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">Player</th>
-              <th className="px-3 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-500 text-center">Class</th>
-              <th className="px-4 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-500 text-center">Score</th>
-              <th className="px-2 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-500 text-center">K</th>
-              <th className="px-2 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-500 text-center">A</th>
-              <th className="px-2 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-500 text-center">D</th>
-              <th className="px-2 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-500 text-center">K/D</th>
-              <th className="px-4 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-500 text-right">DMG</th>
-              <th className="px-2 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-500 text-center">HEAL</th>
-              <th className="px-2 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-500 text-center" title="Ubers">UB</th>
-              <th className="px-2 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-500 text-center" title="Headshot %">HS%</th>
-              <th className="px-2 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-500 text-center" title="Backstabs">BS</th>
-              <th className="px-2 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-500 text-center" title="Buildings Destroyed">BD</th>
-              <th className="px-2 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-500 text-center" title="Support">SUP</th>
+              <SortHeader label="Player" sortKey="name" current={sortConfig} onSort={handleSort} className="px-6" />
+              <th className="px-3 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-500 text-center">Classes</th>
+              <SortHeader label="Score" sortKey="points" current={sortConfig} onSort={handleSort} center />
+              <SortHeader label="K" sortKey="kills" current={sortConfig} onSort={handleSort} center />
+              <SortHeader label="A" sortKey="assists" current={sortConfig} onSort={handleSort} center />
+              <SortHeader label="D" sortKey="deaths" current={sortConfig} onSort={handleSort} center />
+              <SortHeader label="K/D" sortKey="kd" current={sortConfig} onSort={handleSort} center />
+              <SortHeader label="DMG" sortKey="damage_dealt" current={sortConfig} onSort={handleSort} right />
+              <SortHeader label="HEAL" sortKey="healing" current={sortConfig} onSort={handleSort} center />
+              <SortHeader label="CAP" sortKey="captures" current={sortConfig} onSort={handleSort} center />
+              <SortHeader label="DEF" sortKey="defenses" current={sortConfig} onSort={handleSort} center />
+              <SortHeader label="HS" sortKey="headshots" current={sortConfig} onSort={handleSort} center />
+              <SortHeader label="HS%" sortKey="hsPct" current={sortConfig} onSort={handleSort} center />
+              <SortHeader label="UB" sortKey="ubercharges" current={sortConfig} onSort={handleSort} center />
+              <SortHeader label="BS" sortKey="backstabs" current={sortConfig} onSort={handleSort} center />
+              <SortHeader label="BD" sortKey="buildings_destroyed" current={sortConfig} onSort={handleSort} center />
+              <SortHeader label="SUP" sortKey="support" current={sortConfig} onSort={handleSort} center />
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-800">
+          <tbody className="divide-y divide-slate-800/50">
             {sortedUsers.map((user) => {
               const stats = data.playerSummary?.player_summaries[user.userId.toString()];
-              const kd = stats ? (stats.deaths === 0 ? stats.kills : (stats.kills / stats.deaths).toFixed(2)) : '-';
+              const kd = stats ? (stats.deaths === 0 ? stats.kills.toFixed(1) : (stats.kills / stats.deaths).toFixed(2)) : '-';
               const hsPct = stats ? (stats.kills === 0 ? 0 : Math.round((stats.headshots / stats.kills) * 100)) : 0;
 
-              // Find most played class
-              const topClassId = Object.entries(user.classes).reduce((a, b) => b[1] > a[1] ? b : a, ['0', 0])[0];
-
               return (
-                <tr key={user.userId} className="hover:bg-slate-800/40 transition-colors group">
-                  <td className="px-6 py-3 min-w-[200px]">
+                <tr key={user.userId} className="hover:bg-slate-800/30 transition-colors group">
+                  <td className="px-6 py-4 min-w-[200px]">
                     <div className="flex flex-col">
                       <div className="flex items-center gap-2 mb-0.5">
                         <span className={cn(
-                          "font-black text-sm uppercase tracking-tight",
+                          "font-bold text-sm",
                           user.team === 'red' ? "text-red-400" : user.team === 'blue' ? "text-blue-400" : "text-slate-400"
                         )}>
                           {user.name}
                         </span>
                         <a
-                          href={`https://steamcommunity.com/profiles/${user.steamId.replace('[', '').replace(']', '')}`}
+                          href={`https://steamcommunity.com/profiles/${user.steamId}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-slate-700 hover:text-orange-500 transition-colors"
                         >
-                          <ExternalLink size={10} />
+                          <ExternalLink size={12} />
                         </a>
                       </div>
-                      <span className="text-[9px] font-mono text-slate-600 tabular-nums font-bold tracking-tighter opacity-50">{user.steamId}</span>
+                      <span className="text-[10px] font-mono text-slate-600 tabular-nums">{user.steamId}</span>
                     </div>
                   </td>
-                  <td className="px-3 py-3 text-center">
-                    <img
-                      src={getClassIcon(parseInt(topClassId), user.team)}
-                      className="w-6 h-6 mx-auto drop-shadow-[0_0_2px_rgba(0,0,0,0.5)] bg-slate-800/50 rounded p-0.5 border border-slate-700/50"
-                      alt={getClassName(parseInt(topClassId))}
-                      title={Object.entries(user.classes).map(([id, count]) => count > 0 ? `${getClassName(parseInt(id))}: ${count}` : '').filter(Boolean).join('\n')}
-                    />
+                  <td className="px-3 py-4">
+                    <div className="flex items-center justify-center gap-1 flex-wrap max-w-[100px] mx-auto">
+                      {Object.entries(user.classes)
+                        .sort((a, b) => b[1] - a[1])
+                        .map(([classId, count]) => (
+                          count > 0 && (
+                            <img
+                              key={classId}
+                              src={getClassIcon(parseInt(classId), user.team)}
+                              className="w-5 h-5 drop-shadow-md"
+                              alt={getClassName(parseInt(classId))}
+                              title={`${getClassName(parseInt(classId))}: ${count}`}
+                            />
+                          )
+                        ))}
+                    </div>
                   </td>
-                  <td className="px-4 py-3 text-center font-black text-orange-500 tabular-nums text-sm">
-                    {stats?.points ?? '-'}
-                  </td>
-                  <td className="px-2 py-3 text-center text-slate-200 tabular-nums font-bold text-xs">{stats?.kills ?? '-'}</td>
-                  <td className="px-2 py-3 text-center text-slate-500 tabular-nums text-xs">{stats?.assists ?? '-'}</td>
-                  <td className="px-2 py-3 text-center text-slate-600 tabular-nums text-xs">{stats?.deaths ?? '-'}</td>
-                  <td className="px-2 py-3 text-center tabular-nums text-[11px] font-mono font-bold text-slate-400">{kd}</td>
-                  <td className="px-4 py-3 text-right text-slate-300 tabular-nums font-mono font-bold text-xs">
-                    {stats?.damage_dealt.toLocaleString() ?? '-'}
-                  </td>
-                  <td className="px-2 py-3 text-center text-green-600/70 tabular-nums text-[11px] font-bold">{stats?.healing ? stats.healing.toLocaleString() : '-'}</td>
-                  <td className="px-2 py-3 text-center text-blue-400 tabular-nums text-xs font-bold">{stats?.ubercharges || '-'}</td>
-                  <td className="px-2 py-3 text-center text-orange-400/80 tabular-nums text-[11px] font-bold">{hsPct > 0 ? `${hsPct}%` : '-'}</td>
-                  <td className="px-2 py-3 text-center text-purple-400 tabular-nums text-xs">{stats?.backstabs || '-'}</td>
-                  <td className="px-2 py-3 text-center text-slate-300 tabular-nums text-xs">{stats?.buildings_destroyed || '-'}</td>
-                  <td className="px-2 py-3 text-center text-slate-500 tabular-nums text-[10px] font-bold">{stats?.support || '-'}</td>
+                  <td className="px-4 py-4 text-center font-bold text-orange-500 tabular-nums text-sm">{stats?.points ?? '-'}</td>
+                  <td className="px-2 py-4 text-center text-slate-200 tabular-nums text-sm">{stats?.kills ?? '-'}</td>
+                  <td className="px-2 py-4 text-center text-slate-500 tabular-nums text-sm">{stats?.assists ?? '-'}</td>
+                  <td className="px-2 py-4 text-center text-slate-600 tabular-nums text-sm">{stats?.deaths ?? '-'}</td>
+                  <td className="px-2 py-4 text-center tabular-nums text-[11px] font-mono font-bold text-slate-400">{kd}</td>
+                  <td className="px-4 py-4 text-right text-slate-300 tabular-nums font-mono text-sm">{stats?.damage_dealt.toLocaleString() ?? '-'}</td>
+                  <td className="px-2 py-4 text-center text-green-700/60 tabular-nums text-xs font-bold">{stats?.healing ? stats.healing.toLocaleString() : '-'}</td>
+                  <td className="px-2 py-4 text-center text-slate-400 tabular-nums text-sm">{stats?.captures || '-'}</td>
+                  <td className="px-2 py-4 text-center text-slate-400 tabular-nums text-sm">{stats?.defenses || '-'}</td>
+                  <td className="px-2 py-4 text-center text-slate-400 tabular-nums text-sm">{stats?.headshots || '-'}</td>
+                  <td className="px-2 py-4 text-center text-orange-600/60 tabular-nums font-bold text-[11px]">{hsPct > 0 ? `${hsPct}%` : '-'}</td>
+                  <td className="px-2 py-4 text-center text-blue-500/70 tabular-nums text-sm">{stats?.ubercharges || '-'}</td>
+                  <td className="px-2 py-4 text-center text-purple-600/60 tabular-nums text-sm">{stats?.backstabs || '-'}</td>
+                  <td className="px-2 py-4 text-center text-slate-500 tabular-nums text-sm">{stats?.buildings_destroyed || '-'}</td>
+                  <td className="px-2 py-4 text-center text-slate-600 tabular-nums text-xs">{stats?.support || '-'}</td>
                 </tr>
               );
             })}
@@ -289,6 +337,30 @@ function Players({ data }: { data: DemoData }) {
         </table>
       </div>
     </div>
+  );
+}
+
+function SortHeader({ label, sortKey, current, onSort, className, center, right }: { label: string, sortKey: Exclude<SortConfig, null>['key'], current: SortConfig, onSort: (k: any) => void, className?: string, center?: boolean, right?: boolean }) {
+  const active = current?.key === sortKey;
+  return (
+    <th
+      className={cn(
+        "py-4 text-[10px] font-bold uppercase tracking-widest text-slate-500 cursor-pointer hover:text-slate-300 transition-colors group",
+        center && "text-center",
+        right && "text-right",
+        className
+      )}
+      onClick={() => onSort(sortKey)}
+    >
+      <div className={cn("flex items-center gap-1", center && "justify-center", right && "justify-end")}>
+        {label}
+        {active ? (
+          current.direction === 'desc' ? <ChevronDown size={12} className="text-orange-500" /> : <ChevronUp size={12} className="text-orange-500" />
+        ) : (
+          <ArrowUpDown size={10} className="opacity-0 group-hover:opacity-30 transition-opacity" />
+        )}
+      </div>
+    </th>
   );
 }
 
@@ -303,49 +375,49 @@ function Killfeed({ data }: { data: DemoData }) {
   }, [data.deaths, page]);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden text-sm shadow-xl">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-950/50 border-b border-slate-800">
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Time</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 text-right">Killer</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 text-center">Action</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Victim</th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Weapon</th>
+              <tr className="bg-slate-950/30 border-b border-slate-800">
+                <th className="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-500">Time</th>
+                <th className="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-500 text-right">Killer</th>
+                <th className="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-500 text-center">Action</th>
+                <th className="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-500">Victim</th>
+                <th className="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-slate-500">Weapon</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/50">
+            <tbody className="divide-y divide-slate-800/40">
               {displayedDeaths.map((death, i) => {
                 const killer = data.users[death.killer] || { name: 'Unknown', team: 'other' };
                 const victim = data.users[death.victim] || { name: 'Unknown', team: 'other' };
                 const time = formatTick(death.tick, data.intervalPerTick);
 
                 return (
-                  <tr key={i} className="hover:bg-slate-800/30 transition-colors group">
-                    <td className="px-6 py-3.5 text-[11px] font-mono text-slate-600 font-bold tracking-tight">{time}</td>
-                    <td className="px-6 py-3.5 text-right">
+                  <tr key={i} className="hover:bg-slate-800/20 transition-colors group">
+                    <td className="px-8 py-3.5 font-mono text-slate-600 font-medium tabular-nums text-xs">{time}</td>
+                    <td className="px-8 py-3.5 text-right">
                       <span className={cn(
-                        "font-black uppercase tracking-tight text-xs",
-                        killer.team === 'red' ? "text-red-400/90" : killer.team === 'blue' ? "text-blue-400/90" : "text-slate-400"
+                        "font-bold",
+                        killer.team === 'red' ? "text-red-400" : killer.team === 'blue' ? "text-blue-400" : "text-slate-400"
                       )}>
                         {killer.name}
                       </span>
                     </td>
-                    <td className="px-6 py-3.5 text-center">
-                      <ChevronRight className="inline-block text-slate-700 group-hover:translate-x-1 transition-transform" size={12} />
+                    <td className="px-8 py-3.5 text-center">
+                      <ChevronRight className="inline-block text-slate-800 group-hover:translate-x-1 transition-transform" size={14} />
                     </td>
-                    <td className="px-6 py-3.5">
+                    <td className="px-8 py-3.5">
                       <span className={cn(
-                        "font-black uppercase tracking-tight text-xs",
-                        victim.team === 'red' ? "text-red-400/90" : victim.team === 'blue' ? "text-blue-400/90" : "text-slate-400"
+                        "font-bold",
+                        victim.team === 'red' ? "text-red-400" : victim.team === 'blue' ? "text-blue-400" : "text-slate-400"
                       )}>
                         {victim.name}
                       </span>
                     </td>
-                    <td className="px-6 py-3.5">
-                      <span className="text-[10px] bg-slate-950 text-slate-500 px-2.5 py-1 rounded border border-slate-800 font-mono uppercase font-black italic tracking-tighter">
+                    <td className="px-8 py-3.5">
+                      <span className="text-[10px] bg-slate-950/80 text-slate-500 px-2.5 py-1 rounded-md border border-slate-800 font-mono">
                         {death.weapon}
                       </span>
                     </td>
@@ -357,25 +429,25 @@ function Killfeed({ data }: { data: DemoData }) {
         </div>
       </div>
 
-      <div className="flex items-center justify-between px-2">
-        <p className="text-[9px] font-black text-slate-600 uppercase tracking-[0.3em]">
-          {page * ITEMS_PER_PAGE + 1}-{Math.min((page + 1) * ITEMS_PER_PAGE, data.deaths.length)} / {data.deaths.length}
+      <div className="flex items-center justify-between px-4">
+        <p className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">
+          {page * ITEMS_PER_PAGE + 1} - {Math.min((page + 1) * ITEMS_PER_PAGE, data.deaths.length)} / {data.deaths.length}
         </p>
         <div className="flex gap-2">
           <button
             onClick={() => setPage(p => Math.max(0, p - 1))}
             disabled={page === 0}
-            className="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-600 disabled:opacity-20 hover:text-white transition-colors shadow-lg"
+            className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-500 disabled:opacity-20 hover:text-white transition-colors shadow-lg"
           >
             <ChevronLeft size={16} />
           </button>
-          <div className="flex items-center px-4 bg-slate-950 border border-slate-800 rounded-lg text-[10px] font-black text-orange-500/80 tracking-widest italic">
+          <div className="flex items-center px-4 bg-slate-900 border border-slate-800 rounded-lg text-[10px] font-bold text-slate-300">
             {page + 1} / {totalPages}
           </div>
           <button
             onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
             disabled={page === totalPages - 1}
-            className="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-600 disabled:opacity-20 hover:text-white transition-colors shadow-lg"
+            className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-500 disabled:opacity-20 hover:text-white transition-colors shadow-lg"
           >
             <ChevronRight size={16} />
           </button>
@@ -392,33 +464,32 @@ function Chat({ data }: { data: DemoData }) {
   };
 
   return (
-    <div className="bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden max-w-5xl mx-auto shadow-2xl relative">
-      <div className="absolute inset-x-0 h-1 bg-gradient-to-r from-red-500/50 via-slate-800 to-blue-500/50"></div>
-      <div className="p-6 border-b border-slate-800 flex items-center justify-between bg-slate-950/20">
+    <div className="bg-slate-900 rounded-2xl border border-slate-800 shadow-2xl overflow-hidden">
+      <div className="px-8 py-5 border-b border-slate-800 bg-slate-950/20 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <MessageSquare className="text-orange-500" size={20} />
-          <h2 className="font-black uppercase tracking-[0.2em] italic text-xs">Chat Communications</h2>
+          <MessageSquare className="text-orange-500" size={18} />
+          <h2 className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400">Communication Terminal</h2>
         </div>
-        <span className="text-[9px] font-black text-slate-500 bg-slate-800 px-3 py-1 rounded-full border border-slate-700">{data.chat.length} SIGNALS</span>
+        <span className="text-[9px] font-bold text-slate-600 bg-slate-850 px-2.5 py-1 rounded border border-slate-800">{data.chat.length} SIGNALS</span>
       </div>
-      <div className="p-4 font-mono text-[11px] leading-relaxed max-h-[600px] overflow-y-auto custom-scrollbar bg-black/20">
+      <div className="p-6 font-mono text-xs leading-loose space-y-0.5 bg-black/10">
         {data.chat.map((msg, i) => {
           const team = getTeamByName(msg.from);
           return (
-            <div key={i} className="py-1 px-4 hover:bg-slate-800/30 rounded flex gap-4 transition-colors group">
-              <span className="text-[9px] text-slate-700 shrink-0 w-12 tabular-nums pt-0.5 font-bold group-hover:text-slate-500 transition-colors tracking-tighter">
+            <div key={i} className="flex gap-6 group hover:bg-slate-800/10 rounded px-2 -mx-2 transition-colors">
+              <span className="text-[10px] text-slate-700 w-12 tabular-nums group-hover:text-slate-500 transition-colors shrink-0">
                 {formatTick(msg.tick, data.intervalPerTick)}
               </span>
               <p className="break-words">
                 <span className={cn(
-                  "font-black tracking-tight uppercase",
+                  "font-bold",
                   team === 'red' ? "text-red-400" : team === 'blue' ? "text-blue-400" : "text-slate-500"
                 )}>
                   {msg.from}
                 </span>
-                {msg.kind === 'TF_Chat_Team' && <span className="text-slate-600 ml-1.5 font-black text-[9px]">(TEAM)</span>}
-                <span className="text-slate-700 font-black mx-1 opacity-50">:</span>
-                <span className="text-slate-300 font-medium">{msg.text}</span>
+                {msg.kind === 'TF_Chat_Team' && <span className="text-slate-600 ml-1.5 text-[9px] font-bold uppercase">(TEAM)</span>}
+                <span className="text-slate-700 font-bold mx-1 opacity-50">:</span>
+                <span className="text-slate-300">{msg.text}</span>
               </p>
             </div>
           );
@@ -432,54 +503,41 @@ function Rounds({ data }: { data: DemoData }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       {data.rounds.map((round, i) => (
-        <div key={i} className="bg-slate-900 rounded-3xl border-2 border-slate-800 overflow-hidden flex flex-col group shadow-2xl relative">
-           <div className={cn(
-            "absolute top-0 right-0 p-6 opacity-5 pointer-events-none group-hover:opacity-10 transition-opacity",
-            round.winner === 'red' ? "text-red-500" : "text-blue-500"
-          )}>
-            <Trophy size={120} />
-          </div>
+        <div key={i} className="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden flex flex-col group shadow-lg">
           <div className={cn(
-            "h-2",
+            "h-1",
             round.winner === 'red' ? "bg-red-500" : "bg-blue-500"
           )} />
           <div className="p-8">
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 bg-slate-950 rounded-2xl flex items-center justify-center text-orange-500 border-2 border-slate-800 shadow-inner group-hover:rotate-6 transition-transform">
-                  <Trophy size={28} />
+                <div className="w-12 h-12 bg-slate-950 rounded-2xl flex items-center justify-center text-orange-500 border border-slate-800">
+                  <Trophy size={22} />
                 </div>
-                <h3 className="font-black text-2xl italic tracking-tighter uppercase">ROUND {i + 1}</h3>
+                <h3 className="font-bold text-lg tracking-tight uppercase">Round {i + 1}</h3>
               </div>
             </div>
 
-            <div className="space-y-4 pt-4 border-t border-slate-800/50">
-              <RoundInfoRow label="Dominance" value={round.winner} winner={round.winner} />
-              <RoundInfoRow label="Time Active" value={`${Math.floor(round.length / 60)}m ${Math.floor(round.length % 60)}s`} />
-              <RoundInfoRow label="Final Tick" value={round.end_tick.toLocaleString()} />
-            </div>
-
-            <div className={cn(
-              "mt-8 py-2 px-4 rounded-xl text-center text-[10px] font-black uppercase tracking-[0.3em] font-mono",
-              round.winner === 'red' ? "bg-red-500/10 text-red-500" : "bg-blue-500/10 text-blue-500"
-            )}>
-              {round.winner} VICTORY ACHIEVED
+            <div className="space-y-3 pt-4 border-t border-slate-800/50">
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-slate-500 font-medium">Victor</span>
+                <span className={cn(
+                  "font-bold capitalize",
+                  round.winner === 'red' ? "text-red-400" : "text-blue-400"
+                )}>{round.winner}</span>
+              </div>
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-slate-500 font-medium">Time</span>
+                <span className="text-slate-300 font-mono tracking-tight">{Math.floor(round.length / 60)}m {Math.floor(round.length % 60)}s</span>
+              </div>
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-slate-500 font-medium">Terminal tick</span>
+                <span className="text-slate-400 font-mono tracking-tight">{round.end_tick.toLocaleString()}</span>
+              </div>
             </div>
           </div>
         </div>
       ))}
-    </div>
-  );
-}
-
-function RoundInfoRow({ label, value, winner }: { label: string, value: string, winner?: string }) {
-  return (
-    <div className="flex justify-between items-center bg-slate-950/30 p-3 rounded-xl border border-slate-800/10 hover:border-slate-700/30 transition-all">
-      <span className="text-slate-600 font-black text-[9px] uppercase tracking-widest">{label}</span>
-      <span className={cn(
-        "font-black uppercase text-xs tabular-nums tracking-tighter",
-        winner === 'red' ? "text-red-400" : winner === 'blue' ? "text-blue-400" : "text-slate-400"
-      )}>{value}</span>
     </div>
   );
 }
@@ -491,9 +549,10 @@ function getClassName(id: number): string {
 
 function getClassIcon(id: number, team: 'red' | 'blue' | 'other'): string {
   if (team === 'other') return '/logo.png';
-  const classNames = ['Scout', 'Soldier', 'Pyro', 'Demoman', 'Heavy', 'Engineer', 'Medic', 'Sniper', 'Spy'];
-  const name = classNames[id] || 'Scout';
-  return `/icons/classes/120px-${name}_emblem_${team.toUpperCase()}.png`;
+  const classNames = ['scout', 'soldier', 'pyro', 'demoman', 'heavy', 'engineer', 'medic', 'sniper', 'spy'];
+  const name = classNames[id] || 'scout';
+  const teamName = team === 'blue' ? 'Blu' : 'Red';
+  return `/icons/classes/${name}${teamName}.png`;
 }
 
 function formatTick(tick: number, interval?: number): string {

@@ -27,6 +27,26 @@ export interface User {
   team: 'red' | 'blue' | 'other';
 }
 
+export interface PlayerSummary {
+  points: number;
+  kills: number;
+  assists: number;
+  deaths: number;
+  buildings_destroyed: number;
+  captures: number;
+  defenses: number;
+  dominations: number;
+  revenges: number;
+  ubercharges: number;
+  headshots: number;
+  teleports: number;
+  healing: number;
+  backstabs: number;
+  bonus_points: number;
+  support: number;
+  damage_dealt: number;
+}
+
 export interface DeathEvent {
   weapon: string;
   victim: number;
@@ -50,4 +70,7 @@ export interface DemoData {
   startTick: number;
   intervalPerTick: number;
   pauses: any[];
+  playerSummary?: {
+    player_summaries: Record<string, PlayerSummary>;
+  };
 }

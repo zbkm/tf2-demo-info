@@ -75,7 +75,7 @@ export default function App() {
       <header className="bg-slate-900/50 border-b border-slate-800 sticky top-0 z-50 backdrop-blur-md">
         <div className="max-w-[1800px] mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <img src="/logo.png" className="h-8 w-auto cursor-pointer" alt="TF2 Logo" onClick={reset} />
+            <img src="./logo.png" className="h-8 w-auto cursor-pointer" alt="TF2 Logo" onClick={reset} />
             <h1 className="font-bold text-lg tracking-tight text-white hidden sm:block">Demo Viewer</h1>
           </div>
           <button
@@ -548,11 +548,11 @@ function getClassName(id: number): string {
 }
 
 function getClassIcon(id: number, team: 'red' | 'blue' | 'other'): string {
-  if (team === 'other') return '/logo.png';
+  if (team === 'other') return './logo.png';
   const classNames = ['scout', 'soldier', 'pyro', 'demoman', 'heavy', 'engineer', 'medic', 'sniper', 'spy'];
   const name = classNames[id] || 'scout';
-  const teamName = team === 'blue' ? 'Blu' : 'Red';
-  return `/icons/classes/${name}${teamName}.png`;
+  const teamName = team === 'blue' ? 'blu' : 'red';
+  return `./icons/classes/${name}-${teamName}.png`;
 }
 
 function formatTick(tick: number, interval?: number): string {

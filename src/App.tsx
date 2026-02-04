@@ -407,6 +407,7 @@ function Chat({ data }: { data: DemoData }) {
                 )}>
                   {msg.from}
                 </span>
+                {msg.kind === 'TF_Chat_Team' && <span className="text-slate-500 ml-1">(TEAM)</span>}
                 <span className="text-slate-500">: </span>
                 <span className="text-slate-300">{msg.text}</span>
               </p>
